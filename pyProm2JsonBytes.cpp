@@ -17,25 +17,17 @@ inline GoString cStr2GoStr(const char* in) {
     return tmp;
 }
 
-// Call Go function
-//string Prom2Json_bytes(const char* data) {
-//    char *jsonData = goProm2Json_bytes(cStr2GoStr(data));
-//    string tmp(jsonData);
-//    free(jsonData); // Free memory allocated by cgo
-//    return tmp;
-//}
-
-/* Function exposed to Python; wraps the underlying goProm2Json_bytes() function from Go
+/* Function exposed to Python; wraps the underlying goProm2Json() function from Go
  * Takes one parameter:
  *  - promData: Python string representing the output from a Python Exporter
  */
-static PyObject* _PyProm2Json_bytes(PyObject *self, PyObject *args, PyObject *keywords) {
+static PyObject* _PyProm2Json(PyObject *self, PyObject *args, PyObject *keywords) {
     const char *pPromData = NULL;
 
     static char *kwlist[] = {(char*)"promData", NULL};
     // "s" = const char*
     if (PyArg_ParseTupleAndKeywords(args, keywords, "s", kwlist, &pPromData) && pPromData) {
-        char *jsonData = goProm2Json_bytes(cStr2GoStr(pPromData));
+        char *jsonData = goProm2Json(cStr2GoStr(pPromData));
         PyObject* pyStrJson = PyString_FromStringAndSize(jsonData, (Py_ssize_t )strlen(jsonData));
         free(jsonData); // Free memory allocated by cgo
         return pyStrJson;
@@ -47,7 +39,7 @@ static PyObject* _PyProm2Json_bytes(PyObject *self, PyObject *args, PyObject *ke
 }
 
 static PyMethodDef pyProm2JsonMethods[] = {
-    {"prom2json_bytes", (PyCFunction)_PyProm2Json_bytes, METH_KEYWORDS, "Convert Prometheus exporter output (in bytes) to JSON"},
+    {"prom2json", (PyCFunction)_PyProm2Json, METH_KEYWORDS, "Convert Prometheus exporter output string to JSON string"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 

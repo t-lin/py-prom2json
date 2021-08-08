@@ -19,7 +19,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	//"time"
 	"log"
 
 	dto "github.com/prometheus/client_model/go"
@@ -27,8 +26,8 @@ import (
 	"github.com/prometheus/prom2json"
 )
 
-//export goProm2Json_bytes
-func goProm2Json_bytes(data string) *C.char {
+//export goProm2Json
+func goProm2Json(data string) *C.char {
 	var input io.Reader
 	var err error
 
