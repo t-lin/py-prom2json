@@ -22,7 +22,7 @@ $(MKFILE_DIR)build/_$(LIBNAME).so: pyProm2JsonBytes.cpp lib$(LIBNAME).a
 	$(CXX) $(CXXFLAGS) -g -shared -Wl,-O1 -Wl,-Bsymbolic-functions -Wl,-Bsymbolic-functions -Wl,-z,relro -fno-strict-aliasing -DNDEBUG -fwrapv -Wstrict-prototypes -Wdate-time -D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wformat -Werror=format-security $(MKFILE_DIR)build/_$(LIBNAME).o -L$(MKFILE_DIR)build $(LDFLAGS) -o $(MKFILE_DIR)build/_$(LIBNAME).so
 	
 install: $(MKFILE_DIR)build/_$(LIBNAME).so
-	sudo ln -fs $(MKFILE_DIR)build/_$(LIBNAME).so $(LOCAL_PYPATH)/_$(LIBNAME).so
+	sudo cp --preserve=timestamps $(MKFILE_DIR)build/_$(LIBNAME).so $(LOCAL_PYPATH)/_$(LIBNAME).so
 
 clean:
 	rm -rf lib$(LIBNAME).a lib$(LIBNAME).h $(MKFILE_DIR)build
