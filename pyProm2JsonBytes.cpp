@@ -28,7 +28,7 @@ static PyObject* _PyProm2Json(PyObject *self, PyObject *args, PyObject *keywords
     // "s" = const char*
     if (PyArg_ParseTupleAndKeywords(args, keywords, "s", kwlist, &pPromData) && pPromData) {
         char *jsonData = goProm2Json(cStr2GoStr(pPromData));
-        PyObject* pyStrJson = PyString_FromStringAndSize(jsonData, (Py_ssize_t )strlen(jsonData));
+        PyObject* pyStrJson = PyUnicode_FromStringAndSize(jsonData, (Py_ssize_t )strlen(jsonData));
         free(jsonData); // Free memory allocated by cgo
         return pyStrJson;
     } else {
@@ -39,11 +39,27 @@ static PyObject* _PyProm2Json(PyObject *self, PyObject *args, PyObject *keywords
 }
 
 static PyMethodDef pyProm2JsonMethods[] = {
-    {"prom2json", (PyCFunction)_PyProm2Json, METH_KEYWORDS, "Convert Prometheus exporter output string to JSON string"},
+    {"prom2json", (PyCFunction)_PyProm2Json, METH_VARARGS | METH_KEYWORDS, "Convert Prometheus exporter output string to JSON string"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
+#ifdef PYTHON3
+static struct PyModuleDef pyProm2JsonModule = {
+    PyModuleDef_HEAD_INIT,
+    "pyProm2Json",
+    NULL, // No docs
+    -1, // Keep state in global vars
+    pyProm2JsonMethods
+};
+
+// Double-underscore to keep compatibility w/ Python2 version
+PyMODINIT_FUNC PyInit__pyProm2Json()
+{
+    return PyModule_Create(&pyProm2JsonModule);
+}
+#else
 PyMODINIT_FUNC init_pyProm2Json() {
     // Create module and add methods
     Py_InitModule("_pyProm2Json", pyProm2JsonMethods);
 }
+#endif
